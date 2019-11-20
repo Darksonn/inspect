@@ -1,5 +1,5 @@
 use std::io::{BufRead, Read, Error, ErrorKind};
-use std::fmt;
+use std::fmt::{self, Write};
 
 pub struct Base64<I> {
     state: State,

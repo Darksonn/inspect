@@ -3,21 +3,15 @@ use std::io::{Read, BufRead, BufReader};
 use std::fs::File;
 
 pub mod base64;
+pub mod float;
 
 fn main() {
     std::process::exit(run());
 }
 
 static KINDS: &[&str] = &[
-    "json",
     "f32",
     "f64",
-    "u16",
-    "u32",
-    "u64",
-    "i16",
-    "i32",
-    "i64",
 ];
 
 fn build_input<'a, I: BufRead + 'a>(file: I, matches: &ArgMatches) -> Box<dyn Read + 'a> {
@@ -73,6 +67,27 @@ fn run() -> i32 {
     while len > 0 {
         println!("{}", std::str::from_utf8(&buf[0..len]).unwrap());
         len = input.read(&mut buf).expect("Failed to read input.");
+    }
+
+    let output = std::io::stdout();
+    let output = output.lock();
+    match matches.value_of("KIND") {
+        Some("f32") => {
+            let kind = float::Kind::F32;
+            float::format_float(kind, input, output).unwrap();
+        }
+        Some("f64") => {
+            let kind = float::Kind::F32;
+            float::format_float(kind, input, output).unwrap();
+        }
+        Some(kind) => {
+            eprintln!("Unknown kind {}.", kind);
+            return 1;
+        },
+        None => {
+            eprintln!("Missing kind.");
+            return 1;
+        },
     }
 
     0
